@@ -3,6 +3,17 @@ const app = document.getElementById("app");
 
 const categories = ["Math", "Science", "English", "Social Studies", "Morning Work", "Extra Credit", "General"];
 const recoveryQuestions = ["What was your first pet's name?", "What city were you born in?", "What is your favorite subject?", "What was your childhood nickname?", "What is your favorite food?"];
+const languages = { en: "English", tl: "Tagalog", es: "Español", fr: "Français", de: "Deutsch", pt: "Português" };
+const translations = {
+  en: { home: "Home", classes: "Classes", calendar: "Calendar", grades: "Grades", study: "Study Center", focus: "Focus", progress: "Progress", achievements: "Achievements", create: "Create", shop: "XP Shop", more: "More", notifications: "Notifications", profile: "Profile", welcome: "Welcome to Schoolwork Hub", next: "Next", skip: "Skip Tour", done: "Start Using Schoolwork Hub" },
+  tl: { home: "Tahanan", classes: "Mga Klase", calendar: "Kalendaryo", grades: "Mga Marka", study: "Sentro ng Pag-aaral", focus: "Pokus", progress: "Pag-unlad", achievements: "Mga Achievement", create: "Gumawa", shop: "XP Shop", more: "Higit Pa", notifications: "Mga Abiso", profile: "Profile", welcome: "Maligayang pagdating sa Schoolwork Hub", next: "Susunod", skip: "Laktawan ang Tour", done: "Simulan ang Schoolwork Hub" },
+  es: { home: "Inicio", classes: "Clases", calendar: "Calendario", grades: "Calificaciones", study: "Estudio", focus: "Enfoque", progress: "Progreso", achievements: "Logros", create: "Crear", shop: "Tienda XP", more: "Más", notifications: "Notificaciones", profile: "Perfil", welcome: "Bienvenido a Schoolwork Hub", next: "Siguiente", skip: "Saltar tour", done: "Comenzar" },
+  fr: { home: "Accueil", classes: "Cours", calendar: "Calendrier", grades: "Notes", study: "Étude", focus: "Concentration", progress: "Progrès", achievements: "Réussites", create: "Créer", shop: "Boutique XP", more: "Plus", notifications: "Notifications", profile: "Profil", welcome: "Bienvenue dans Schoolwork Hub", next: "Suivant", skip: "Ignorer", done: "Commencer" },
+  de: { home: "Start", classes: "Klassen", calendar: "Kalender", grades: "Noten", study: "Lernzentrum", focus: "Fokus", progress: "Fortschritt", achievements: "Erfolge", create: "Erstellen", shop: "XP-Shop", more: "Mehr", notifications: "Benachrichtigungen", profile: "Profil", welcome: "Willkommen bei Schoolwork Hub", next: "Weiter", skip: "Überspringen", done: "Starten" },
+  pt: { home: "Início", classes: "Aulas", calendar: "Calendário", grades: "Notas", study: "Estudos", focus: "Foco", progress: "Progresso", achievements: "Conquistas", create: "Criar", shop: "Loja XP", more: "Mais", notifications: "Notificações", profile: "Perfil", welcome: "Bem-vindo ao Schoolwork Hub", next: "Próximo", skip: "Pular tour", done: "Começar" }
+};
+
+function tr(key) { return (translations[state.profile.language] || translations.en)[key] || translations.en[key] || key; }
 const STORE_KEY = "schoolwork_accounts_v4";
 const LAST_USER_KEY = "schoolwork_last_user_v4";
 const REMEMBER_ME_KEY = "schoolwork_remember_me_v1";
@@ -63,7 +74,7 @@ const state = {
   search: "",
   sortBy: "due",
   filterBy: "all",
-  profile: { nickname: "", avatar: "", theme: "dark" },
+  profile: { nickname: "", avatar: "", theme: "dark", language: "en", tutorialSeen: false },
   classData: {},
   grades: [],
   study: { workMinutes: 25, breakMinutes: 5, mode: "work", running: false, startedAt: null, seconds: 0, flashcards: [], cardIndex: 0, showAnswer: false, mistakes: [] },
@@ -745,6 +756,10 @@ function extrasView() {
   return `<section class="hero"><div><h2>More Tools</h2><p class="subtitle">Heatmaps, pinned work, countdowns, links, and recovery.</p></div></section><section class="grid-2"><article class="card"><h3>Exam Countdown</h3>${tests.map((a) => `<div class="metric-row"><span>${a.name}<small class="subtitle">${a.className || a.category}</small></span><strong>${a.dueDate || "No date"}</strong></div>`).join("") || `<p class="subtitle">No exams scheduled.</p>`}</article><article class="card"><h3>Pinned Assignments</h3>${pinned.map((a) => `<div class="metric-row"><span>${a.name}</span><button class="btn alt" data-unpin="${a.id}">Unpin</button></div>`).join("") || `<p class="subtitle">Pin important work from the dashboard.</p>`}</article></section><section class="card" style="margin-top:14px;"><h3>Homework Heatmap</h3><p class="subtitle">Recent completed work</p><div class="heatmap">${Array.from({ length: 28 }, (_, i) => `<span class="heat-cell ${i < completed.length ? "filled" : ""}"></span>`).join("")}</div></section><section class="grid-2" style="margin-top:14px;"><article class="card"><h3>Favorite Websites</h3><form class="form" id="favorite-form"><input class="input" name="site" placeholder="https://example.com" required /><button class="btn" type="submit">Add Favorite</button></form><ul class="history-list">${state.favorites.map((site) => `<li><a href="${site}" target="_blank" rel="noreferrer">${site}</a></li>`).join("")}</ul></article><article class="card"><h3>Recycle Bin</h3>${trash.map((a) => `<div class="metric-row"><span>${a.name}</span><button class="btn alt" data-restore="${a.id}">Restore</button></div>`).join("") || `<p class="subtitle">Nothing to restore.</p>`}</article></section>`;
 }
 
+function tutorialView() {
+  return `<div class="tutorial-backdrop"><section class="tutorial-card"><img class="app-logo" src="icons/schoolwork-hub-logo.png" alt="Schoolwork Hub" /><p class="eyebrow">SCHOOLWORK HUB</p><h2>${tr("welcome")}</h2><p class="subtitle">Create assignments, use Focus Mode, track grades, earn XP, and organize every class in one place.</p><div class="tutorial-steps"><div><strong>1</strong><span>Add work from Create or Calendar.</span></div><div><strong>2</strong><span>Use Focus for a timed study session.</span></div><div><strong>3</strong><span>Check Progress, Achievements, and XP Shop.</span></div></div><div class="tutorial-actions"><button class="btn alt" id="tutorial-skip">${tr("skip")}</button><button class="btn" id="tutorial-done">${tr("done")}</button></div></section></div>`;
+}
+
 function achievementsView() {
   const defs = achievementDefs();
   const unlocked = defs.filter((a) => state.achievements.includes(a.id)).length;
@@ -842,7 +857,7 @@ function profileView() {
   const hour12 = state.schedule.deadlineHour % 12 === 0 ? 12 : state.schedule.deadlineHour % 12;
   const ampm = state.schedule.deadlineHour >= 12 ? "PM" : "AM";
 
-  const accountPanel = `<article class="card lift-up"><form class="form" id="profile-form-account"><input class="input" name="displayName" value="${state.user.name}" placeholder="Full name" /><input class="input" name="nickname" value="${state.profile.nickname}" placeholder="Nickname" /><input class="input" name="avatar" value="${state.profile.avatar}" placeholder="Avatar URL" /><select class="select" name="theme"><option value="dark" ${state.profile.theme === "dark" ? "selected" : ""}>Dark</option><option value="light" ${state.profile.theme === "light" ? "selected" : ""}>Light</option><option value="custom" ${state.profile.theme === "custom" ? "selected" : ""}>School Blue</option></select><button class="btn" type="submit">Save Account</button></form><div class="subtitle" style="margin-top:14px;">Signed in as: ${displayName} (${state.user.email})</div>${state.profile.avatar ? `<img src="${state.profile.avatar}" alt="avatar" style="margin-top:12px;width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--card-border);" />` : ""}</article>`;
+  const accountPanel = `<article class="card lift-up"><form class="form" id="profile-form-account"><input class="input" name="displayName" value="${state.user.name}" placeholder="Full name" /><input class="input" name="nickname" value="${state.profile.nickname}" placeholder="Nickname" /><input class="input" name="avatar" value="${state.profile.avatar}" placeholder="Avatar URL" /><select class="select" name="theme"><option value="dark" ${state.profile.theme === "dark" ? "selected" : ""}>Dark</option><option value="light" ${state.profile.theme === "light" ? "selected" : ""}>Light</option><option value="custom" ${state.profile.theme === "custom" ? "selected" : ""}>School Blue</option></select><select class="select" name="language">${Object.entries(languages).map(([code, label]) => `<option value="${code}" ${state.profile.language === code ? "selected" : ""}>${label}</option>`).join("")}</select><button class="btn" type="submit">Save Account</button></form><div class="subtitle" style="margin-top:14px;">Signed in as: ${displayName} (${state.user.email})</div>${state.profile.avatar ? `<img src="${state.profile.avatar}" alt="avatar" style="margin-top:12px;width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--card-border);" />` : ""}</article>`;
 
   const settingsPanel = `<article class="card lift-up"><form class="form" id="profile-form-settings"><input class="input" name="schoolName" value="${state.schedule.schoolName}" placeholder="School name" /><input class="input" name="blockName" value="${state.schedule.blockName}" placeholder="Work block name" /><select class="select" name="timeZone">${timeZones.map((tz) => `<option value="${tz}" ${state.schedule.timeZone === tz ? "selected" : ""}>${tz === "auto" ? "Auto (not recommended)" : tz}</option>`).join("")}</select><label class="subtitle">Weekly reward limit (minutes)<input class="input" type="number" min="0" max="600" name="rewardCapMinutes" value="${state.lifetime.rewardCapMinutes || 60}" /></label><select class="select" name="deadlineType"><option value="weekly" ${state.schedule.deadlineType === "weekly" ? "selected" : ""}>Weekly deadline</option><option value="date" ${state.schedule.deadlineType === "date" ? "selected" : ""}>Specific date deadline</option></select><select class="select" name="deadlineWeekday">${weekDays.map((d) => `<option value="${d.value}" ${Number(state.schedule.deadlineWeekday) === d.value ? "selected" : ""}>${d.label}</option>`).join("")}</select><input class="input" type="date" name="deadlineDate" value="${state.schedule.deadlineDate || nextDeadlineDateString()}" /><select class="select" name="timeFormat"><option value="12h" ${state.schedule.timeFormat === "12h" ? "selected" : ""}>Regular Time (AM/PM)</option><option value="24h" ${state.schedule.timeFormat === "24h" ? "selected" : ""}>Military Time</option></select>${state.schedule.timeFormat === "24h" ? `<div class="grid-2"><input class="input" type="number" min="0" max="23" name="deadlineHour24" value="${state.schedule.deadlineHour}" /><input class="input" type="number" min="0" max="59" name="deadlineMinute" value="${state.schedule.deadlineMinute}" /></div>` : `<div class="grid-3"><input class="input" type="number" min="1" max="12" name="deadlineHour12" value="${hour12}" /><select class="select" name="deadlineAmPm"><option ${ampm === "AM" ? "selected" : ""}>AM</option><option ${ampm === "PM" ? "selected" : ""}>PM</option></select><input class="input" type="number" min="0" max="59" name="deadlineMinute" value="${state.schedule.deadlineMinute}" /></div>`}<button class="btn" type="submit">Save Settings</button></form><p class="subtitle" style="margin-top:10px;">Current deadline: ${formatSchedule()}</p></article>`;
 
@@ -966,7 +981,7 @@ function shellView() {
     ? notificationsView()
     : profileView();
 
-  return `<div class="shell school-layout">${headerNav()}<main class="content">${view}</main>${state.toast ? `<div class="toast"><span>${state.toast.message}</span>${state.toast.undo ? `<button id="toast-undo">Undo</button>` : ""}</div>` : ""}</div>`;
+  return `<div class="shell school-layout">${headerNav()}<main class="content">${view}</main>${state.toast ? `<div class="toast"><span>${state.toast.message}</span>${state.toast.undo ? `<button id="toast-undo">Undo</button>` : ""}</div>` : ""}${state.profile.tutorialSeen ? "" : tutorialView()}</div>`;
 }
 
 function bind() {
@@ -1069,6 +1084,8 @@ function bind() {
     state.currentTab = "dashboard";
     render();
   });
+  document.getElementById("tutorial-skip")?.addEventListener("click", () => { state.profile.tutorialSeen = true; persist(); render(); });
+  document.getElementById("tutorial-done")?.addEventListener("click", () => { state.profile.tutorialSeen = true; persist(); render(); });
 
   document.querySelectorAll("[data-nav]").forEach((b) => {
     b.addEventListener("click", () => {
@@ -1320,6 +1337,7 @@ function bind() {
     state.profile.nickname = String(fd.get("nickname")).trim();
     state.profile.avatar = String(fd.get("avatar")).trim();
     state.profile.theme = String(fd.get("theme"));
+    state.profile.language = String(fd.get("language") || "en");
     document.body.dataset.theme = state.profile.theme;
     persist();
     pushToast("Account updated");
