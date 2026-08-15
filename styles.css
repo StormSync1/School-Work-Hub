@@ -22,6 +22,7 @@ html,
 body {
   margin: 0;
   min-height: 100%;
+  height: 100%;
 }
 
 body {
@@ -67,7 +68,8 @@ body[data-theme="custom"] {
 }
 
 #app {
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   padding: 24px;
@@ -75,7 +77,8 @@ body[data-theme="custom"] {
 
 .shell {
   width: min(1440px, 100%);
-  min-height: calc(100vh - 48px);
+  height: calc(100vh - 48px);
+  min-height: 0;
   background: color-mix(in srgb, var(--bg) 76%, transparent);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-xl);
@@ -94,6 +97,11 @@ body[data-theme="custom"] {
 .content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
   padding: 24px;
   padding-bottom: 28px;
 }
@@ -225,7 +233,8 @@ body[data-theme="custom"] {
 @media (max-width: 650px) { .due-soon-columns { grid-template-columns: 1fr; } }
 @media (max-width: 700px) {
   body { overflow-x: hidden; }
-  .shell { min-height: 100dvh; }
+  #app { height: 100dvh; padding: 0; }
+  .shell { height: 100dvh; min-height: 0; border-radius: 0; }
   .top-header { position: sticky; top: 0; z-index: 20; flex-wrap: wrap; gap: 8px; padding: 10px 12px; backdrop-filter: blur(16px); }
   .brand { font-size: .95rem; }
   .brand-logo { width: 28px; height: 28px; }
