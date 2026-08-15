@@ -233,6 +233,11 @@ body[data-theme="custom"] {
 .flashcard { min-height: 130px; display: grid; place-items: center; text-align: center; padding: 20px; margin: 14px 0; border: 1px solid var(--card-border); border-radius: 16px; background: linear-gradient(135deg, rgba(34,211,238,.12), rgba(255,255,255,.03)); transition: transform 220ms ease; }
 .flashcard:active { transform: rotateY(8deg); }
 .tool-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.tool-inline { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.tool-inline .input { flex: 1 1 260px; }
+.times-table { display: grid; gap: 3px; margin-top: 14px; overflow-x: auto; font-size: .72rem; }
+.times-table > div { display: grid; grid-template-columns: repeat(12, minmax(72px, 1fr)); gap: 3px; }
+.times-table span { padding: 6px; border-radius: 5px; background: rgba(255,255,255,.06); white-space: nowrap; }
 .heatmap { display: grid; grid-template-columns: repeat(14, 1fr); gap: 5px; margin-top: 14px; }
 .heat-cell { aspect-ratio: 1; border-radius: 4px; background: rgba(255,255,255,.08); }
 .heat-cell.filled { background: var(--accent); box-shadow: 0 0 8px rgba(34,211,238,.35); }

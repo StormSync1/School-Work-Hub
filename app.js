@@ -865,6 +865,8 @@ function profileView() {
 }
 
 let flappyLoopHandle = null;
+let stopwatchHandle = null;
+let stopwatchSeconds = 0;
 
 function drawFlappy() {
   const canvas = document.getElementById("flappy-canvas");
@@ -982,6 +984,24 @@ function shellView() {
     : profileView();
 
   return `<div class="shell school-layout">${headerNav()}<main class="content">${view}</main>${state.toast ? `<div class="toast"><span>${state.toast.message}</span>${state.toast.undo ? `<button id="toast-undo">Undo</button>` : ""}</div>` : ""}${state.profile.tutorialSeen ? "" : tutorialView()}</div>`;
+}
+
+function showSchoolTool(tool) {
+  const output = document.getElementById("tool-output");
+  if (!output) return;
+  if (tool === "calculator") {
+    output.innerHTML = `<div class="tool-inline"><input class="input" id="calc-input" placeholder="Example: (12 * 4) + 3" /><button class="btn" id="calc-run">Calculate</button><strong id="calc-result"></strong></div>`;
+    document.getElementById("calc-run")?.addEventListener("click", () => { const expression = document.getElementById("calc-input").value.trim(); const result = document.getElementById("calc-result"); if (!/^[0-9+\-*/().%\s]+$/.test(expression)) { result.textContent = "Use numbers and math operators only."; return; } try { result.textContent = `= ${Function(`"use strict"; return (${expression})`)()}`; } catch (_) { result.textContent = "Invalid expression."; } });
+  } else if (tool === "multiplication") {
+    output.innerHTML = `<div class="times-table">${Array.from({ length: 12 }, (_, row) => `<div>${Array.from({ length: 12 }, (_, col) => `<span>${row + 1} x ${col + 1} = ${(row + 1) * (col + 1)}</span>`).join("")}</div>`).join("")}</div>`;
+  } else if (tool === "word-counter") {
+    output.innerHTML = `<textarea class="input" id="counter-input" rows="5" placeholder="Paste or type notes here"></textarea><p class="subtitle" id="counter-result">0 words | 0 characters</p>`;
+    document.getElementById("counter-input")?.addEventListener("input", (e) => { const value = e.target.value; const words = value.trim() ? value.trim().split(/\s+/).length : 0; document.getElementById("counter-result").textContent = `${words} words | ${value.length} characters`; });
+  } else {
+    output.innerHTML = `<div class="tool-inline"><strong id="stopwatch-result">00:00</strong><button class="btn" id="stopwatch-start">Start</button><button class="btn alt" id="stopwatch-reset">Reset</button></div>`;
+    document.getElementById("stopwatch-start")?.addEventListener("click", (e) => { if (stopwatchHandle) { clearInterval(stopwatchHandle); stopwatchHandle = null; e.target.textContent = "Start"; } else { e.target.textContent = "Stop"; stopwatchHandle = setInterval(() => { stopwatchSeconds += 1; const el = document.getElementById("stopwatch-result"); if (el) el.textContent = `${String(Math.floor(stopwatchSeconds / 60)).padStart(2, "0")}:${String(stopwatchSeconds % 60).padStart(2, "0")}`; }, 1000); } });
+    document.getElementById("stopwatch-reset")?.addEventListener("click", () => { clearInterval(stopwatchHandle); stopwatchHandle = null; stopwatchSeconds = 0; document.getElementById("stopwatch-result").textContent = "00:00"; });
+  }
 }
 
 function bind() {
@@ -1216,6 +1236,7 @@ function bind() {
   document.getElementById("practice-form")?.addEventListener("submit", (e) => { e.preventDefault(); const fd = new FormData(e.currentTarget); state.study.mistakes.push({ question: String(fd.get("question")), answer: String(fd.get("answer")), type: String(fd.get("type")) }); persist(); pushToast("Practice question saved"); render(); });
   document.querySelectorAll("[data-tool]").forEach((b) => b.addEventListener("click", () => { const output = document.getElementById("tool-output"); if (!output) return; const tool = b.getAttribute("data-tool"); output.textContent = tool === "calculator" ? "Calculator ready: use the browser or add an expression in your notes." : tool === "multiplication" ? "Multiplication table: 1 x 1 through 12 x 12 is ready to practice." : tool === "word-counter" ? "Word Counter ready for your study notes." : "Stopwatch ready for your next study session."; }));
 
+  document.querySelectorAll("[data-tool]").forEach((b) => b.addEventListener("click", () => showSchoolTool(b.getAttribute("data-tool"))));
   document.querySelectorAll("[data-action='start-work']").forEach((btn) => btn.addEventListener("click", () => {
     const a = state.assignments.find((x) => x.id === btn.getAttribute("data-id"));
     if (!a) return;
