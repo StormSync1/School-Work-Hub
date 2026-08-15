@@ -1,0 +1,10 @@
+node_modules/
+dist/
+phone-project/.gradle/
+phone-project/build/
+phone-project/app/build/
+*.apk
+*.aab
+.idea/
+*.iml
+Thumbs.db

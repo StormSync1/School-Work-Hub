@@ -1,0 +1,47 @@
+{
+  "name": "schoolwork-hub",
+  "version": "1.0.0",
+  "description": "Schoolwork planner desktop app",
+  "main": "main.js",
+  "author": "Schoolwork Hub",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "serve:http": "node server.js",
+    "dist": "electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.schoolworkhub.app",
+    "productName": "Schoolwork Hub",
+    "files": [
+      "index.html",
+      "styles.css",
+      "app.js",
+      "manifest.webmanifest",
+      "sw.js",
+      "icons/**/*",
+      "main.js",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "icon": "icons/icon-512.png",
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
