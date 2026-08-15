@@ -1093,6 +1093,10 @@ function bind() {
       render();
     });
   });
+  document.querySelectorAll(".top-actions").forEach((nav) => nav.addEventListener("wheel", (e) => {
+    if (nav.scrollWidth <= nav.clientWidth) return;
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { nav.scrollLeft += e.deltaY; e.preventDefault(); }
+  }, { passive: false }));
 
   document.getElementById("logout")?.addEventListener("click", () => {
     state.user = null;

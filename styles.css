@@ -115,7 +115,7 @@ body[data-theme="custom"] {
   justify-content: space-between;
   gap: 14px;
   padding: 16px 20px;
-  background: color-mix(in srgb, var(--panel) 90%, transparent);
+  background: linear-gradient(100deg, color-mix(in srgb, var(--panel) 96%, transparent), color-mix(in srgb, var(--panel-2) 80%, transparent));
   border-bottom: 1px solid var(--card-border);
   backdrop-filter: blur(8px);
 }
@@ -134,7 +134,13 @@ body[data-theme="custom"] {
   gap: 8px;
   overflow-x: auto;
   scrollbar-width: thin;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  padding: 3px 2px 7px;
 }
+.top-actions::-webkit-scrollbar { height: 6px; }
+.top-actions::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 99px; }
+.top-actions::-webkit-scrollbar-thumb { background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 99px; }
 
 .top-actions button {
   border: 1px solid var(--card-border);
@@ -151,6 +157,7 @@ body[data-theme="custom"] {
 .top-actions button.active {
   border-color: color-mix(in srgb, var(--accent) 60%, transparent);
   color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent), 0 6px 18px rgba(34,211,238,.12);
 }
 
 .coin-chip {
